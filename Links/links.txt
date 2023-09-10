@@ -1,3 +1,5 @@
 1> https://flexboxfroggy.com/
 2> https://cssgridgarden.com/
 3> https://appbrewery.github.io/bootstrap-layout/
+4> https://color.adobe.com/create/color-wheel
+5> https://colorhunt.co/
