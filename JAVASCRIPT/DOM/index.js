@@ -29,3 +29,54 @@ box.appendChild(newELE);
 box.removeChild(newELE);
 
 // parentElement.replaceChild(newElement, oldElement)
+
+z.addEventListener("click",function(){
+    alert("Learn complete Document Object Model Of HTML:")
+});
+z.style.cursor = "pointer"
+
+
+// document.getElementsByTagName() returns array
+//   document.querySelector("li a") // selects a inside the li
+//  document.getElementById("id")
+// when multiple items matches same selector then we get the first element.
+// adding classes and ids using js
+// document.querySelector("button").classList.add("new-class") or .remove("existing-class") or .toggle("class")
+
+/*
+    eventListener('click',func()) -> function wil be called initially
+    eventListener('click',func)
+    ecentListener('click',function(){
+        //anonymous function
+    })
+*/
+/*
+higher order functon:
+add(num1,num2)
+{
+    return num1+num2;
+}
+multiply(num1,num2)
+{
+    return num1*num2
+}
+
+f(num1,num2,calculator)
+{
+    return calculator(num1,num2)
+}
+
+calling: 
+    f(3,4,add)
+*/
+
+// objects
+var obj1={
+    name:"hello",
+    age:18,
+    class:"high",
+    origin:"europa",
+    x:[3,4,2,2,4,4]
+}
+console.log(obj1)
+console.log(obj1['name'])

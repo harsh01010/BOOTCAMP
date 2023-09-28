@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Me</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="./1-removebg-preview.png" alt="OFF">
+    </div>
+
+    <script>
+        let flag = "off";
+        var img = document.querySelector("img")
+        img.style.cursor='pointer'
+        img.addEventListener('click',function(){
+            if(flag=="off"){
+            img.src = "./2-removebg-previeww.png";
+                flag = "on";
+            }
+            else   { img.src = "./1-removebg-preview.png";
+            flag = "off";
+        }
+
+        })
+        flag = "on"
+    </script>
+</body>
+</html>
