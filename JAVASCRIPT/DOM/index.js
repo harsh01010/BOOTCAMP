@@ -71,12 +71,48 @@ calling:
 */
 
 // objects
-var obj1={
-    name:"hello",
-    age:18,
-    class:"high",
-    origin:"europa",
-    x:[3,4,2,2,4,4]
+// var obj1={
+//     name:"hello",
+//     age:18,
+//     class:"high",
+//     origin:"europa",
+//     x:[3,4,2,2,4,4]
+// }
+// console.log(obj1)
+// console.log(obj1['name'])
+
+/*
+function obj1(a,b,c,d,e)
+{
+    this.name = a;
+    this.age = b;
+    this.class = c;
+    this.origin = d;
+    this.x = e;
+    this.f = function(){
+        alert("hello world!")
+    }
 }
-console.log(obj1)
-console.log(obj1['name'])
+
+var x = new obj1("world",44,"low","earth",[0,0,0,0])
+console.log(x)
+x.f()
+*/
+/*
+switch case 
+switch(exp){
+    case exp:
+        exp
+        break
+    case exp:
+        exp
+        break
+}
+*/
+
+// key events
+document.addEventListener("keydown",function(event){
+    console.log(event)
+});
+// keyup trigers when we leave the key after pressing
+// keydown trigers when we press down the key.
