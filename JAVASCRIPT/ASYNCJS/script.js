@@ -71,8 +71,8 @@ function shortList(list) {
             const sList = '📜';
             resolve(sList);
         }, 3000);
-    });
-}
+    } );
+} 
 
 function takeInterview(sList) {
     return new Promise((resolve, reject) => {
