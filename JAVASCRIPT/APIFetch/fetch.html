@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background-color: #212121;
+            color: white;
+            font-weight: bolder;
+            font-family: cursive;
+            padding-top: 100px;
+            padding-left: 20px;
+        }
+        #saveForm{
+            margin-top: 20px;
+            margin-left: 80px;
+        }
+    </style>
+</head>
+<body>
+    <form id="myForm">
+        Title <input type="text" id="title"></br></br>
+        Body <input type="body" id="body"></br></br>
+        userId <input type="userId" id="userId"></br>
+        <input type="submit" id="saveForm">
+    </form>
+
+    <script>
+        if(window.fetch){
+            // document.querySelector("#saveForm").addEventListener("click",function(e){
+            //     e.preventDefault();
+            //     fetch('https://jsonplaceholder.typicode.com/posts',{
+            //         method:'POST',
+            //         body: JSON.stringify({
+            //             title:'foo',
+            //             body:'bar',
+            //             userId:1,
+            //         }),
+            //         headers:{
+            //             'Conteent-type':'application/json',
+            //         },
+            //     })
+            //     .then(response=>response.json())
+            //     .then(json=>console.log(json))
+            // })
+
+            //sending the content of the form
+            document.querySelector("#saveForm").addEventListener('click',function(e){
+                e.preventDefault()
+
+                fetch('https://jsonplaceholder.typicode.com/posts',{
+                    method:'POST',
+                    body: new FormData(document.getElementById('myForm')),
+                    headers:{
+                        'content-type':'application/x-www-form-urlencoded',
+                    },
+                })
+                .then(response=>response.json())
+                .then(data=>console.log(data))
+        })
+        }
+        else{
+            console.log(`fetch is not supported in your browser , download other browser!!!`)
+            
+        }
+
+    </script>
+    
+</body>
+</html>
