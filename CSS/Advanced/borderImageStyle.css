@@ -1,0 +1,33 @@
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #424242;
+    color: white;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.container{
+    height: 350px;
+    width: 400px;
+    border: 35px solid red;
+    border-image-source: url(https://i.pinimg.com/originals/3b/c9/a8/3bc9a86d64315f697a04f7eec5fee1a9.jpg);
+    border-image-slice: 30%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    border-image-repeat: repeat round;
+    border-image-width: 30px;
+    border-image-outset: 5px;
+}
+
+.container2{
+    margin-top: 15px;
+    height: 280px;
+    width: 400px;
+    border: 3px solid red;
+    background-image: url(https://cdn.mos.cms.futurecdn.net/DrRN4BTQ9Wk8fHdGjKB2A-320-80.jpg),url(https://images.rawpixel.com/image_social_landscape/cHJpdmF0ZS9zdGF0aWMvaW1hZ2VzL3dlYnNpdGUvMjAyMi0wNS9ybTQyMi0wNzYteC5qcGc.jpg?s=12XEN_JtC_urL8QGGgT2B6ujqs6XO4IppQhb8gLLVTQ);
+    background-position: right bottom ,left top;
+    background-repeat: no-repeat,no-repeat;
+    background-size: 100px,110%;
+}
