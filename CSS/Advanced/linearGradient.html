@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>linear-gradient</title>
+</head>
+<style>
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #414141;
+        gap: 20px;
+    }
+    .container{
+        height: 400px;
+        width: 400px;
+        background: linear-gradient(45deg, blue, red);
+        /* Multi-position color stop: A gradient tilted 45 degrees,
+   with a red bottom-left half and a blue top-right half,
+   with a hard line where the gradient changes from red to blue
+   linear-gradient(45deg, red 0 50%, blue 50% 100%);
+    */
+
+    }
+    .container2{
+        height: 400px;
+        width: 800px;
+        background: radial-gradient( ellipse at bottom,violet,indigo,blue ,green,yellow,orange,red 73%);
+        border: 2px solid green;
+        border-radius: 45% 54% 10% 10% / 58% 48% 0% 0% 
+        
+
+    }
+</style>
+<body>
+    <div class="container">
+
+    </div>
+    <div class="container2">
+
+    </div>
+    
+
+</body>
+</html>

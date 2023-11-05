@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>beforeAfter</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .main{
+            min-height: 100vh;
+            background: #3498db;
+            display: flex;
+            justify-content: center;
+            padding-top: 100px;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        ::selection{
+            background-color: rgb(246, 246, 161);
+            color: #3498db;
+            
+        }
+        h1{
+            color: whitesmoke;
+            text-shadow: 0px 3px 20px black;
+            text-align: center;
+
+        }
+        h1::before{
+            /* content: "::Before"; */
+            content: "";
+            height: 12px;
+            background-color: #414141;
+            display: block;
+            border-radius: 20px;
+            
+           
+        }
+        h1::after{
+            /* content: "::After"; */
+            content: "";
+            height: 12px;
+            display: block;
+            background-color: #414141;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1>Before And After</h1>
+    </div>
+</body>
+</html>
