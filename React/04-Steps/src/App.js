@@ -6,6 +6,13 @@ const messages = [
   "Invest your new income 🤑",
 ];
 export default function App() {
+  return (
+    <div>
+      <Steps />
+    </div>
+  );
+}
+function Steps() {
   const [step, setStep] = useState(1); // all starting with use is called hook in react
   const [isOpen, setIsOpen] = useState(true);
   function incr() {
@@ -24,23 +31,30 @@ export default function App() {
             <div className={`${step === 2 ? "active" : ""}`}>2</div>
             <div className={`${step === 3 ? "active" : ""}`}>3</div>
           </div>
-          <p className="message">
+          {/* <p className="message">
             Step {step}:{messages.at(step - 1)}
-          </p>
+          </p> */}
+          <StepMessage step={step}>{messages[step - 1]}</StepMessage>
           <div className="buttons">
-            <button
+            {/* <button
               style={{ backgroundColor: "#7950f2", color: "#fff" }}
               onClick={dcer}
             >
               previous
-            </button>
-
-            <button
+            </button> */}
+            <Button bgc={"#7950f2"} col={"#fff"} handle={dcer}>
+              {" "}
+              <span>👈 Previous</span>
+            </Button>
+            {/* <button
               style={{ backgroundColor: "#7950f2", color: "#fff" }}
               onClick={incr}
             >
               next
-            </button>
+            </button> */}
+            <Button bgc={"#7950f2"} col={"#fff"} handle={incr}>
+              <spna>Next 👉</spna>
+            </Button>
           </div>
         </div>
       )}
@@ -48,6 +62,24 @@ export default function App() {
   );
 }
 
+function Button({ bgc, col, handle, children }) {
+  return (
+    <button
+      style={{ backgroundColor: `${bgc}`, color: `${col}` }}
+      onClick={handle}
+    >
+      {children}
+    </button>
+  );
+}
+function StepMessage({ step, children }) {
+  return (
+    <div className="message">
+      <h3>Step {step}</h3>
+      {children}
+    </div>
+  );
+}
 /*
 what is state and why do we need it?
 
@@ -61,4 +93,5 @@ React Reacts to state changes by re rendering the ui, that's why it is named rea
 Each component has and manages its own state,no matter how many times we render the same component.
 UI as a function of state
 
+children prop -> <Comp>children prop value</Comp
 */
