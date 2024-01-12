@@ -3,15 +3,17 @@ import Button from "./Button";
 export default function FormAddFriend({ onAddFriend }) {
   const [name, setName] = useState("");
   const [url, setUrl] = useState(`https://i.pravatar.cc/48`);
+
   function handleSubmit(e) {
     e.preventDefault();
     if (!name || !url) return;
     const id = crypto.randomUUID;
+    console.log(id);
     const newFriend = {
       id,
       name,
       image: `${url}?=${id}`,
-      balance: 5,
+      balance: 0,
     };
     console.log(newFriend);
     onAddFriend((p) => [...p, newFriend]);
