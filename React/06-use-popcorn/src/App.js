@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import StarRating from "./StarRating";
 
 const tempMovieData = [
   {
@@ -23,6 +24,7 @@ const tempMovieData = [
       "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
   },
 ];
+const KEY = `d6b639f2`;
 
 const tempWatchedData = [
   {
@@ -62,8 +64,7 @@ function Logo() {
   );
 }
 
-function Search() {
-  const [query, setQuery] = useState("");
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
@@ -102,19 +103,19 @@ function Box({ children }) {
   );
 }
 
-function MovieList({ movies }) {
+function MovieList({ movies, handleClick }) {
   return (
-    <ul className="list barInvis">
+    <ul className="list barInvis list-movies">
       {movies.map((movie) => (
-        <Movie movie={movie} />
+        <Movie movie={movie} key={movie.imdbID} handleClick={handleClick} />
       ))}
     </ul>
   );
 }
 
-function Movie({ movie }) {
+function Movie({ movie, handleClick }) {
   return (
-    <li key={movie.imdbID}>
+    <li onClick={() => handleClick(movie.imdbID)}>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
@@ -186,25 +187,195 @@ function WatchedMovie({ movie }) {
     </li>
   );
 }
+
+function Loader() {
+  return <div class="loader"></div>;
+}
+function Error({ children }) {
+  return <p className="error">{children}</p>;
+}
+function SelectedMovie({ selectedId, onCloseMovie }) {
+  const [loading, setLoading] = useState(false);
+  const [movie, setMovie] = useState({});
+
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    Plot: plot,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    Genre: genre,
+  } = movie;
+  if (!loading) console.log(title, year);
+  useEffect(
+    function () {
+      async function getMovieDetails() {
+        setLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+        );
+        const data = await res.json();
+        console.log(data);
+        setMovie(data);
+
+        setLoading(false);
+      }
+      getMovieDetails();
+    },
+    [selectedId]
+  );
+  return (
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="details">
+          <header>
+            <button className="btn-back" onClick={onCloseMovie}>
+              &larr;
+            </button>
+            <img src={poster} alt="poster"></img>
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>
+                {released}&bull; {runtime}
+              </p>
+              <p>{genre}</p>
+              <p>
+                <span>⭐</span>
+                {imdbRating}IMDB Rating
+              </p>
+            </div>
+          </header>
+          <section>
+            <div className="rating">
+              <StarRating maxRating={10} size={24}></StarRating>
+            </div>
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Starring {actors}</p>
+            <p>Directed by {director}</p>
+          </section>
+        </div>
+      )}
+    </>
+  );
+}
 export default function App() {
-  const [watched, setWatched] = useState(tempWatchedData);
-  const [movies, setMovies] = useState(tempMovieData);
+  const [query, setQuery] = useState("");
+  const [watched, setWatched] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
+
+  // useEffect(function () {
+  //   console.log("after initial render");
+  // }, []);
+  // useEffect(function () {
+  //   console.log("after every render");
+  // });
+  // useEffect(
+  //   function () {
+  //     console.log("D");
+  //   },
+  //   [query]
+  // );
+  // console.log("c");
+  function handleSelectMovie(id) {
+    if (selectedId !== id) {
+      setSelectedId(id);
+      console.log("hello");
+    } else handleCloseMovie();
+  }
+  function handleCloseMovie() {
+    setSelectedId(null);
+  }
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError(""); // reset the previous error
+          const res =
+            await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}
+    `);
+          if (!res.ok)
+            throw new Error("something went wrong with fetching movies");
+
+          const data = await res.json();
+
+          if (data.Response === "False") {
+            throw new Error("Error");
+          }
+          setMovies(data.Search);
+        } catch (err) {
+          console.log(err.message);
+          setError(err.message ? err.message : "No Movies Found!");
+        } finally {
+          setIsLoading(false);
+        }
+        //console.log(movies); // still old value will be printed , setting state in synchronous.
+      }
+      if (query.length < 3) {
+        setMovies([]);
+        setError("");
+      } else fetchMovies();
+    },
+    [query]
+  );
+
   return (
     <>
       <Navbar>
         <Logo />
-        <Search />
+        <Search query={query} setQuery={setQuery} />
         <NumResults movies={movies} />
       </Navbar>
       <Main>
         <Box>
-          <MovieList movies={movies} />
+          {error != "" ? (
+            <Error>{error}</Error>
+          ) : isLoading ? (
+            <Loader />
+          ) : (
+            <MovieList handleClick={handleSelectMovie} movies={movies} />
+          )}
         </Box>
         <Box>
-          <Summary watched={watched} />
-          <WatchedList watched={watched} />
+          {selectedId ? (
+            <SelectedMovie
+              selectedId={selectedId}
+              onCloseMovie={handleCloseMovie}
+            />
+          ) : (
+            <>
+              <Summary watched={watched} />
+              <WatchedList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
   );
 }
+
+/*
+dependency array of useeffect
+-> by defalut, effects run after every render.we can prevent that by passing a dependency array
+->without this array react don't know when to run the effect
+->each time one of the dependencies changes, the effect will be executed again.
+->every state variable and prop used inside the effect must be included in the dependency array.
+
+->UseEffect is like an event listener that is listening for one dependency to change. Whenever a dependency changes, it will execute the effect again.
+->we can use the dependency array to run effects when the component renders or re-renders
+
+useEffect(fn,[x,y,z])-> effect sync with x,y,z . runs on mount(initial render) and re-render by updating x,y or z
+useEffect(fn,[])-> effect sync with no props , runs  only on mount
+useEffect(fn)-> effect sync with every thing , runs on every render(usually bad)
+*/
