@@ -1,29 +1,6 @@
 import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
 
-const tempMovieData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt0133093",
-    Title: "The Matrix",
-    Year: "1999",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt6751668",
-    Title: "Parasite",
-    Year: "2019",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-  },
-];
 const KEY = `d6b639f2`;
 
 const average = (arr) =>
@@ -43,6 +20,13 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
+  /*
+  useEffect(function () {
+    const el = document.querySelector(".search");
+    el.focus();
+  }, []);
+    above is not the react way of doing dom manipulation , we will use useRef hook
+  */
   return (
     <input
       className="search"
@@ -136,17 +120,21 @@ function Summary({ watched }) {
   );
 }
 
-function WatchedList({ watched }) {
+function WatchedList({ watched, onDeleteWatched }) {
   return (
     <ul className="list barInvis">
       {watched.map((movie) => (
-        <WatchedMovie movie={movie} key={movie.imdbID} />
+        <WatchedMovie
+          movie={movie}
+          key={movie.imdbID}
+          onDeleteWatched={onDeleteWatched}
+        />
       ))}
     </ul>
   );
 }
 
-function WatchedMovie({ movie }) {
+function WatchedMovie({ movie, onDeleteWatched }) {
   return (
     <li>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
@@ -163,6 +151,7 @@ function WatchedMovie({ movie }) {
         <p>
           <span>⏳</span>
           <span>{movie.runtime} min</span>
+          <span onClick={() => onDeleteWatched(movie)}>❌</span>
         </p>
       </div>
     </li>
@@ -228,9 +217,10 @@ function SelectedMovie({ selectedId, onCloseMovie, watched, onAddWatched }) {
   );
 
   const present = watched.reduce(
-    (acc, curr) => (acc, curr) => acc || curr.imdbID === movie.imdbID,
+    (acc, curr) => acc || curr.imdbID === movie.imdbID,
     false
   );
+  console.log(present);
 
   const watchedUserRating = watched.find(
     (movie) => movie.imdbID === selectedId
@@ -317,8 +307,14 @@ function AnimateBtn({ movie, onAddWatched, children }) {
 }
 
 export default function App() {
-  const [query, setQuery] = useState("");
-  const [watched, setWatched] = useState([]);
+  const [query, setQuery] = useState("Thor");
+  //   const [watched, setWatched] = useState(
+  //     JSON.parse(localStorage.getItem("watched"))
+  //   ); avoid  this
+  const [watched, setWatched] = useState(function () {
+    const storedVal = localStorage.getItem("watched");
+    return JSON.parse(storedVal);
+  });
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -337,6 +333,7 @@ export default function App() {
   }
 
   function handleAddWatched(movie) {
+    console.log("added");
     const present = watched.reduce(
       (acc, curr) => acc || curr.imdbID === movie.imdbID,
       false
@@ -348,8 +345,22 @@ export default function App() {
         watched.filter((curr) => curr.imdbID !== movie.imdbID)
       );
     }
+
+    handleCloseMovie();
+  }
+  function handleDeleteWatched(movie) {
+    setWatched((watched) =>
+      watched.filter((curr) => curr.imdbID != movie.imdbID)
+    );
   }
 
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+      console.log(typeof JSON.parse(localStorage.getItem("watched")));
+    },
+    [watched]
+  );
   useEffect(
     function () {
       const controller = new AbortController();
@@ -421,7 +432,10 @@ export default function App() {
           ) : (
             <>
               <Summary watched={watched} />
-              <WatchedList watched={watched} />
+              <WatchedList
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
@@ -431,28 +445,43 @@ export default function App() {
 }
 
 /*
-dependency array of useeffect
--> by defalut, effects run after every render.we can prevent that by passing a dependency array
-->without this array react don't know when to run the effect
-->each time one of the dependencies changes, the effect will be executed again.
-->every state variable and prop used inside the effect must be included in the dependency array.
-
-->UseEffect is like an event listener that is listening for one dependency to change. Whenever a dependency changes, it will execute the effect again.
-->we can use the dependency array to run effects when the component renders or re-renders
-
-useEffect(fn,[x,y,z])-> effect sync with x,y,z . runs on mount(initial render) and re-render by updating x,y or z
-useEffect(fn,[])-> effect sync with no props , runs  only on mount
-useEffect(fn)-> effect sync with every thing , runs on every render(usually bad)
+states are  updated asynchronously we cannot get the the value of state immediately after updaing it.
+eg.:
+const [aveRating,setAveRating] = useState(0)
+function hadleAvg(){
+    setAvgRating(Number(imdbRating));
+    setAvgRating((aveRAting+userRating)/2); // this is put wrong value , becaue we cannot get the value of aveRating immediatly after updating , it it "stale state"
+    it can solved by passing a callback function
+    e.g:
+    setAvgRating((avgRating)=>(avgRating+userRating)/2)
+}
 
 
+// localStorage.setItem("key",value(should be string(Json.stringigy))) -> local storage stores items as keyvalue pair
+*/
+/*
+use state summary:
 
-cleanup function:
-  -> function that we can return from an effect (optional)
-  ->runs on two different occasions:
-      -> before the effect is executed again
-      -> after a componet has unmounted
-  ->Each effect should do only one thing! use one useeffect hook for each side effect
+create state -> simple , based of function(lazy evaluation)(function must be pure and accept no arguments,called only on initial render)
 
 
-Abort controller and listening to keypress in react (also solving the addition of multiple eventlisteners)
+updating state -> simple,based on current state(preffered)
+*/
+
+/*
+    REF with useRef
+
+    "BOX"(object) with a mutable .current property that is persisted across renders("normal" variables are always reset)
+    usecases:
+        creating a variable that stays the same between renders (eg. previous state,setTimeout id , etc)
+
+        selecting and storing DOM elements
+
+    refs are for data that is not rendered: usually only appear in event handlers or effects , not  in JSX(otherwise use state)
+
+    do not read write or read .curr in render logic(like state)
+
+    updaing refs do not renrenders the component. 
+    unlike state refs are mutable
+    updates are synchronous in ref , we can read just after updaing a ref. 
 */
