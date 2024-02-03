@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StarRating from "./StarRating";
+import { useMovies } from "./useMovies";
 
 const KEY = `d6b639f2`;
 
@@ -27,6 +28,19 @@ function Search({ query, setQuery }) {
   }, []);
     above is not the react way of doing dom manipulation , we will use useRef hook
   */
+  const inputEl = useRef(null);
+  useEffect(function () {
+    function callback(e) {
+      if (document.activeElement === inputEl.current) return;
+      if (e.code === "Enter") {
+        inputEl.current.focus();
+        setQuery("");
+      }
+    }
+    document.addEventListener("keydown", callback);
+    return () => document.removeEventListener("keydown", callback);
+    //inputEl.current.focus();
+  }, []);
   return (
     <input
       className="search"
@@ -34,6 +48,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEl}
     />
   );
 }
@@ -169,6 +184,18 @@ function Error({ children }) {
 function SelectedMovie({ selectedId, onCloseMovie, watched, onAddWatched }) {
   const [loading, setLoading] = useState(false);
   const [movie, setMovie] = useState({});
+  const [userRating, setUserRating] = useState("");
+
+  const countRef = useRef(0);
+  useEffect(
+    function () {
+      if (userRating) countRef.current += 1;
+    },
+    [userRating]
+  );
+  /*
+    if we want to store the value of how many time a user rated a movie , we can use the above method
+  */
 
   const {
     Title: title,
@@ -182,6 +209,7 @@ function SelectedMovie({ selectedId, onCloseMovie, watched, onAddWatched }) {
     Director: director,
     Genre: genre,
   } = movie;
+  const movieAndRatingCount = [{ ...movie, ratingCount: countRef.current }];
 
   useEffect(
     function () {
@@ -263,7 +291,11 @@ function SelectedMovie({ selectedId, onCloseMovie, watched, onAddWatched }) {
                 <span>⭐</span>
                 {imdbRating}IMDB Rating
               </p>
-              <AnimateBtn movie={movie} onAddWatched={onAddWatched}>
+              <AnimateBtn
+                m
+                /*movie={movie}*/ movie={movieAndRatingCount}
+                onAddWatched={onAddWatched}
+              >
                 {present ? "remove from watched" : "add to watched"}
               </AnimateBtn>
             </div>
@@ -308,16 +340,18 @@ function AnimateBtn({ movie, onAddWatched, children }) {
 
 export default function App() {
   const [query, setQuery] = useState("Thor");
-  //   const [watched, setWatched] = useState(
-  //     JSON.parse(localStorage.getItem("watched"))
-  //   ); avoid  this
+  /*
+    const [watched, setWatched] = useState(
+       JSON.parse(localStorage.getItem("watched"))
+     ); avoid  this
+     */
   const [watched, setWatched] = useState(function () {
     const storedVal = localStorage.getItem("watched");
     return JSON.parse(storedVal);
   });
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  //using our custom hook
+  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
   const [selectedId, setSelectedId] = useState(null);
 
   function handleSelectMovie(id) {
@@ -360,48 +394,6 @@ export default function App() {
       console.log(typeof JSON.parse(localStorage.getItem("watched")));
     },
     [watched]
-  );
-  useEffect(
-    function () {
-      const controller = new AbortController();
-      async function fetchMovies() {
-        try {
-          setIsLoading(true);
-          setError("");
-          const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-            { signal: controller.signal }
-          );
-          if (!res.ok) {
-            throw new Error("something went wrong with fetching movies");
-          }
-
-          const data = await res.json();
-
-          if (data.Response === "False") {
-            throw new Error("movie not found");
-          }
-          setMovies(data.Search);
-          setError("");
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            setError(err.message ? err.message : "No Movies Found!");
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-
-      if (query.length < 3) {
-        setMovies([]);
-        setError("");
-      }
-      fetchMovies();
-      return function () {
-        controller.abort();
-      };
-    },
-    [query]
   );
 
   return (
