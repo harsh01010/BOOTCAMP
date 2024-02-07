@@ -345,11 +345,11 @@ export default function App() {
        JSON.parse(localStorage.getItem("watched"))
      ); avoid  this
      */
-  const [watched, setWatched] = useState(function () {
-    const storedVal = localStorage.getItem("watched");
-    return JSON.parse(storedVal);
-  });
-
+  //   const [watched, setWatched] = useState(function () {
+  //     const storedVal = localStorage.getItem("watched");
+  //     return storedVal ? JSON.parse(storedVal) : [];
+  //   });
+  const [watched, setWatched] = useState([]);
   //using our custom hook
   const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
   const [selectedId, setSelectedId] = useState(null);
@@ -388,13 +388,13 @@ export default function App() {
     );
   }
 
-  useEffect(
-    function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
-      console.log(typeof JSON.parse(localStorage.getItem("watched")));
-    },
-    [watched]
-  );
+  //   useEffect(
+  //     function () {
+  //       localStorage.setItem("watched", JSON.stringify(watched));
+  //       console.log(typeof JSON.parse(localStorage.getItem("watched")));
+  //     },
+  //     [watched]
+  //   );
 
   return (
     <>
