@@ -13,7 +13,7 @@ function reducer(state, action) {
     case "defineStep":
       return { ...state, step: action.payload.step };
     case "reset":
-      return action.payload;
+      return { count: 0, step: 1 };
     default:
       throw new Error("Invalid action type");
   }
@@ -62,7 +62,6 @@ function DateCounter() {
     //setStep(1);
     dispatch({
       type: "reset",
-      payload: initialState,
     });
   };
 
@@ -96,7 +95,7 @@ function DateCounter() {
 }
 export default DateCounter;
 
-/* useReducer state 
+/* useReducer Hook
 
  used for state management
  const [count, dispatch] = useReducer(reducer, 0);
@@ -109,5 +108,28 @@ export default DateCounter;
   return state + action; // whatever we return becomes the new state
 }
 
+
+state management with useState is not enough in certain situations:
+
+when components have lot of state variables and updates
+when multiple state updates need to happen at the same time
+when updating one piece of state depends on one or multiple other pieces of state
+
+in all these cases useReducer can be used.
+
+it is an alternative way of setting state , ideal for complex state and related piece of state.
+
+stores related pieces of state in a state object.
+
+useReducer needs reducer function containing all logic to update state , decouples state logic from component
+
+reducer is a pure function (no side effects) that takes current state and action , and returns the next state.
+
+action:object that describes how to update state
+dispatch:function to trigger state updates,by sending actions from event  handlers to the reducer(istead of setState())
+
+realworld analogy:
+  for small amount atm(useState)
+  for large amount( person(dispatcher)->bank employee(reducer) ->(action) money withdraw-> vault (state))
 
 */
