@@ -1,0 +1,20 @@
+routing:
+-> with routing , we match different urls to different UI views (react components):Routes
+->This enables users to navigate between different applications screens,using the browser urls
+->Keeps the UI in sync with the current browser url 
+
+www.eg.com/ -> www.eg.com/login -> www.eg.com/app
+
+Single page applications:
+->application that is executed entirely on the client(browser)
+->Routes:different URLs correspond to different views(components)
+->Javascript(react) is used to update the page(DOM)
+->The Page is never reloaded
+->Feels like a native app
+->Additional data might be loaded from a web api
+
+    User clicks router link
+            |
+    URL is changed(is react , react router package does this job)
+            |
+        Dom is updated(react component corresponding to the new URL is rendered) <-> Load data from web API 

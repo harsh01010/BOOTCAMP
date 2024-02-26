@@ -11,6 +11,7 @@ function createRandomPost() {
 }
 
 function App() {
+  
   const [isFakeDark, setIsFakeDark] = useState(false);
   useEffect(
     function () {
